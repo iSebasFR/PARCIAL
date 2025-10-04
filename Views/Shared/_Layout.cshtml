@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Portal Académico</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos personalizados para el Portal Académico */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #27ae60;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar personalizada */
+        .navbar-brand {
+            font-weight: 600;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .nav-link.text-light:hover {
+            color: #e9ecef !important;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-color);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-graduation-cap me-2"></i>Portal Académico
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <!-- Mostrar Catálogo de Cursos SOLO para usuarios normales (NO coordinadores) -->
+                            @if (!User.IsInRole("Coordinador"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-controller="Cursos" asp-action="Catalogo">Catálogo de Cursos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-controller="Matriculas" asp-action="MisMatriculas">Mis Matrículas</a>
+                                </li>
+                            }
+
+                            <!-- Menú de Coordinador (SOLO para coordinadores) -->
+                            @if (User.IsInRole("Coordinador"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user-tie me-1"></i>Coordinador
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Coordinador" asp-action="Index"><i class="fas fa-tachometer-alt me-2"></i>Panel Principal</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="Coordinador" asp-action="Cursos"><i class="fas fa-book me-2"></i>Gestión de Cursos</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Coordinador" asp-action="Matriculas"><i class="fas fa-clipboard-list me-2"></i>Gestión de Matrículas</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            <!-- Enlace al último curso visitado (SOLO para usuarios normales) -->
+                            @if (!User.IsInRole("Coordinador") && !string.IsNullOrEmpty(Context.Session.GetString("UltimoCursoVisitado")))
+                            {
+                                var ultimoCurso = Context.Session.GetString("UltimoCursoVisitado").Split('|');
+                                if (ultimoCurso.Length == 2)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-warning" asp-controller="Cursos" asp-action="Detalle" asp-route-id="@ultimoCurso[0]">
+                                            <i class="fas fa-arrow-left me-1"></i><strong>Volver a @ultimoCurso[1]</strong>
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <!-- Opciones para usuarios NO autenticados -->
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Cursos" asp-action="Catalogo">Catálogo de Cursos</a>
+                            </li>
+                        }
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            <i class="fas fa-graduation-cap me-2"></i>&copy; 2024 - Portal Académico
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
