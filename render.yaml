@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: PARCIAL-1
+    env: docker
+    docker:
+      dockerfile: Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:8080
+      - key: ConnectionStrings__DefaultConnection
+        value: Data Source=parcialbase.db
+      - key: ConnectionStrings__Redis
+        value: localhost
+    autoDeploy: true
