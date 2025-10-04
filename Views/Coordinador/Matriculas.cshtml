@@ -1,0 +1,678 @@
+@model List<PARCIAL.Models.Matricula>
+
+@{
+    ViewData["Title"] = "Gestión de Matrículas";
+    var cursos = ViewBag.Cursos as List<PARCIAL.Models.Curso>;
+    var cursoSeleccionado = ViewBag.CursoSeleccionado as int?;
+    var users = ViewBag.Users as Dictionary<string, string>;
+}
+
+<style>
+    .gestion-matriculas-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #3498db;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .page-title i {
+        margin-right: 15px;
+        color: #3498db;
+        font-size: 2rem;
+    }
+
+    /* Alertas */
+    .alert {
+        border: none;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+        border: none;
+    }
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    /* Filtro */
+    .filtro-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .filtro-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: none;
+    }
+
+    .filtro-header h5 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .filtro-header h5 i {
+        margin-right: 10px;
+    }
+
+    .filtro-body {
+        padding: 2rem;
+        background: #f8f9fa;
+    }
+
+    .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+    /* Botones */
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+
+    /* Tabla de matrículas */
+    .tabla-matriculas {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .tabla-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tabla-header h5 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .tabla-header h5 i {
+        margin-right: 10px;
+    }
+
+    .contador-matriculas {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .table {
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table thead th {
+        background: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        padding: 1.25rem 1rem;
+        border-bottom: 2px solid #3498db;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .table tbody td {
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        color: #5d6d7e;
+    }
+
+    .estudiante-nombre {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .curso-nombre {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .curso-codigo {
+        font-family: 'Courier New', monospace;
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+
+    /* Badges de estado */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .bg-warning {
+        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+        color: white;
+    }
+
+    .bg-success {
+        background: linear-gradient(135deg, #27ae60, #229954) !important;
+        color: white;
+    }
+
+    .bg-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+        color: white;
+    }
+
+    /* Botones de acción */
+    .acciones-grupo {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-success-sm {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        color: white;
+    }
+
+    .btn-success-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        color: white;
+    }
+
+    .btn-danger-sm {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        color: white;
+    }
+
+    .btn-danger-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        color: white;
+    }
+
+    .btn-success-sm i,
+    .btn-danger-sm i {
+        margin-right: 5px;
+        font-size: 0.8rem;
+    }
+
+    /* Resumen */
+    .resumen-matriculas {
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .resumen-titulo {
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .resumen-titulo i {
+        margin-right: 10px;
+    }
+
+    .resumen-stats {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+    }
+
+    .resumen-stat {
+        padding: 0 1rem;
+    }
+
+    .resumen-numero {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .resumen-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    /* Estado vacío */
+    .estado-vacio {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+
+    .estado-vacio i {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.8;
+    }
+
+    .estado-vacio h5 {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .tabla-matriculas {
+            border-radius: 10px;
+        }
+        
+        .tabla-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .table thead {
+            display: none;
+        }
+        
+        .table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .table tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .table tbody td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #2c3e50;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            min-width: 100px;
+        }
+        
+        .table tbody td:last-child {
+            border-bottom: none;
+            padding-top: 1rem;
+            justify-content: center;
+        }
+        
+        .acciones-grupo {
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .resumen-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .resumen-stat {
+            padding: 0.5rem 0;
+        }
+        
+        .estado-vacio {
+            padding: 2rem 1rem;
+        }
+        
+        .estado-vacio i {
+            font-size: 3rem;
+        }
+    }
+
+    /* Animaciones */
+    .tabla-matriculas {
+        animation: slideInUp 0.6s ease;
+    }
+
+    .table tbody tr {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="gestion-matriculas-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-clipboard-list"></i>@ViewData["Title"]
+        </h2>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Filtro por curso -->
+    <div class="card filtro-card">
+        <div class="filtro-header">
+            <h5><i class="fas fa-filter me-2"></i>Filtrar por Curso</h5>
+        </div>
+        <div class="filtro-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-8">
+                    <label class="form-label text-dark fw-semibold">Seleccionar Curso</label>
+                    <select name="cursoId" class="form-select">
+                        <option value="">-- Todos los cursos --</option>
+                        @if (cursos != null)
+                        {
+                            foreach (var curso in cursos)
+                            {
+                                <option value="@curso.Id" selected="@(cursoSeleccionado == curso.Id)">@curso.Nombre (@curso.Codigo)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                    <a href="@Url.Action("Matriculas")" class="btn btn-secondary">
+                        <i class="fas fa-broom me-2"></i>Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="tabla-matriculas">
+            <div class="tabla-header">
+                <h5><i class="fas fa-list-alt me-2"></i>Lista de Matrículas</h5>
+                <div class="contador-matriculas">
+                    <i class="fas fa-users me-1"></i>@Model.Count Matrículas
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Estudiante</th>
+                            <th>Curso</th>
+                            <th>Código</th>
+                            <th>Fecha Registro</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var matricula in Model)
+                        {
+                            var userName = users != null && users.ContainsKey(matricula.UsuarioId) ? users[matricula.UsuarioId] : "el estudiante";
+                            
+                            <tr>
+                                <td data-label="Estudiante">
+                                    <span class="estudiante-nombre">
+                                        @if (users != null && users.ContainsKey(matricula.UsuarioId))
+                                        {
+                                            @users[matricula.UsuarioId]
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@matricula.UsuarioId.Substring(0, 8)...</span>
+                                        }
+                                    </span>
+                                </td>
+                                <td data-label="Curso">
+                                    <span class="curso-nombre">@matricula.Curso.Nombre</span>
+                                </td>
+                                <td data-label="Código">
+                                    <span class="curso-codigo">@matricula.Curso.Codigo</span>
+                                </td>
+                                <td data-label="Fecha Registro">@matricula.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td data-label="Estado">
+                                    @switch (matricula.Estado)
+                                    {
+                                        case EstadoMatricula.Pendiente:
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>Pendiente
+                                            </span>
+                                            break;
+                                        case EstadoMatricula.Confirmada:
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Confirmada
+                                            </span>
+                                            break;
+                                        case EstadoMatricula.Cancelada:
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Cancelada
+                                            </span>
+                                            break;
+                                    }
+                                </td>
+                                <td data-label="Acciones">
+                                    <div class="acciones-grupo">
+                                        @if (matricula.Estado == EstadoMatricula.Pendiente)
+                                        {
+                                            <form method="post" action="@Url.Action("ConfirmarMatricula", new { id = matricula.Id })" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-success-sm" 
+                                                        onclick="return confirm('¿Confirmar matrícula de @userName en @matricula.Curso.Nombre?')">
+                                                    <i class="fas fa-check"></i>Confirmar
+                                                </button>
+                                            </form>
+                                            <form method="post" action="@Url.Action("CancelarMatricula", new { id = matricula.Id })" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger-sm" 
+                                                        onclick="return confirm('¿Cancelar matrícula de @userName en @matricula.Curso.Nombre?')">
+                                                    <i class="fas fa-times"></i>Cancelar
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (matricula.Estado == EstadoMatricula.Confirmada)
+                                        {
+                                            <form method="post" action="@Url.Action("CancelarMatricula", new { id = matricula.Id })" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger-sm" 
+                                                        onclick="return confirm('¿Cancelar matrícula CONFIRMADA de @userName en @matricula.Curso.Nombre?')">
+                                                    <i class="fas fa-ban"></i>Cancelar
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Sin acciones</span>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="resumen-matriculas">
+            <div class="resumen-titulo">
+                <i class="fas fa-chart-pie me-2"></i>Resumen de Matrículas
+            </div>
+            <div class="resumen-stats">
+                <div class="resumen-stat">
+                    <div class="resumen-numero">@Model.Count(m => m.Estado == EstadoMatricula.Pendiente)</div>
+                    <div class="resumen-label">Pendientes</div>
+                </div>
+                <div class="resumen-stat">
+                    <div class="resumen-numero">@Model.Count(m => m.Estado == EstadoMatricula.Confirmada)</div>
+                    <div class="resumen-label">Confirmadas</div>
+                </div>
+                <div class="resumen-stat">
+                    <div class="resumen-numero">@Model.Count(m => m.Estado == EstadoMatricula.Cancelada)</div>
+                    <div class="resumen-label">Canceladas</div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="estado-vacio">
+            <i class="fas fa-inbox"></i>
+            <h5>No hay matrículas registradas</h5>
+            <p class="mb-3">No se encontraron matrículas con los filtros seleccionados.</p>
+        </div>
+    }
+
+    <div class="mt-4">
+        <a href="@Url.Action("Index")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Panel
+        </a>
+    </div>
+</div>
