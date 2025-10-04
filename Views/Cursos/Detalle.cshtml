@@ -1,0 +1,429 @@
+@model PARCIAL.Models.Curso
+
+@{
+    ViewData["Title"] = "Detalle del Curso";
+}
+
+<style>
+    .detalle-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* Alertas */
+    .alert {
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+
+    .alert-warning {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: white;
+        border: none;
+    }
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    /* Tarjeta principal */
+    .curso-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .curso-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 2rem;
+        border-bottom: none;
+    }
+
+    .curso-header h2 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .curso-header h2 i {
+        margin-right: 15px;
+        font-size: 1.8rem;
+    }
+
+    .curso-body {
+        padding: 2.5rem;
+        background: white;
+    }
+
+    /* Lista de detalles */
+    .detalle-list {
+        margin-bottom: 2.5rem;
+    }
+
+    .detalle-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .detalle-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+
+    .detalle-icon {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .detalle-content {
+        flex-grow: 1;
+    }
+
+    .detalle-label {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .detalle-value {
+        color: #5d6d7e;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .bg-success {
+        background: linear-gradient(135deg, #27ae60, #229954) !important;
+    }
+
+    .bg-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    }
+
+    /* Botones */
+    .btn-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        background: linear-gradient(135deg, #229954, #1e8449);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-group .btn {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-group .btn i {
+        margin-right: 8px;
+    }
+
+    /* Acciones principales */
+    .acciones-principales {
+        margin: 2.5rem 0;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 15px;
+        text-align: center;
+    }
+
+    .acciones-secundarias {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid #e9ecef;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .curso-header {
+            padding: 1.5rem;
+        }
+        
+        .curso-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .curso-body {
+            padding: 1.5rem;
+        }
+        
+        .detalle-item {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .detalle-icon {
+            margin-right: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .btn-group .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Animaciones */
+    .curso-card {
+        animation: slideInUp 0.6s ease;
+    }
+
+    .detalle-item {
+        animation: fadeIn 0.6s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="detalle-container">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="curso-card">
+        <div class="curso-header">
+            <h2><i class="fas fa-book"></i>@Model.Nombre</h2>
+        </div>
+        <div class="curso-body">
+            <div class="detalle-list">
+                <div class="detalle-item">
+                    <div class="detalle-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <div class="detalle-content">
+                        <div class="detalle-label">Código del Curso</div>
+                        <div class="detalle-value">@Model.Codigo</div>
+                    </div>
+                </div>
+
+                <div class="detalle-item">
+                    <div class="detalle-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="detalle-content">
+                        <div class="detalle-label">Créditos Académicos</div>
+                        <div class="detalle-value">@Model.Creditos créditos</div>
+                    </div>
+                </div>
+
+                <div class="detalle-item">
+                    <div class="detalle-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="detalle-content">
+                        <div class="detalle-label">Capacidad Máxima</div>
+                        <div class="detalle-value">@Model.CupoMaximo estudiantes</div>
+                    </div>
+                </div>
+
+                <div class="detalle-item">
+                    <div class="detalle-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="detalle-content">
+                        <div class="detalle-label">Horario de Clases</div>
+                        <div class="detalle-value">
+                            @{
+                                var horaInicio = DateTime.Today.Add(Model.HorarioInicio).ToString("hh\\:mm tt");
+                                var horaFin = DateTime.Today.Add(Model.HorarioFin).ToString("hh\\:mm tt");
+                            }
+                            @horaInicio - @horaFin
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detalle-item">
+                    <div class="detalle-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="detalle-content">
+                        <div class="detalle-label">Estado del Curso</div>
+                        <div class="detalle-value">
+                            @if (Model.Activo)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>Activo y Disponible
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times me-1"></i>Inactivo
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acciones-principales">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a href="/Matriculas/Inscribirse/@Model.Id" class="btn btn-success">
+                        <i class="fas fa-user-plus me-2"></i>Inscribirse en este Curso
+                    </a>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <h5 class="mb-3"><i class="fas fa-lock me-2"></i>Acceso Requerido</h5>
+                        <p class="mb-3">Debes iniciar sesión para poder inscribirte en este curso.</p>
+                        <a href="/Identity/Account/Login" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <div class="acciones-secundarias">
+                <div class="btn-group">
+                    <a href="/Cursos/Catalogo" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Catálogo
+                    </a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a href="/Matriculas/MisMatriculas" class="btn btn-info">
+                            <i class="fas fa-clipboard-list me-2"></i>Ver Mis Matrículas
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
