@@ -1,0 +1,437 @@
+@model PARCIAL.Models.Curso
+
+@{
+    ViewData["Title"] = "Crear Nuevo Curso";
+}
+
+<style>
+    .crear-curso-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* Tarjeta principal */
+    .crear-curso-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        overflow: hidden;
+        margin: 2rem 0;
+    }
+
+    .crear-curso-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        border-bottom: none;
+    }
+
+    .crear-curso-header h2 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .crear-curso-header h2 i {
+        margin-right: 15px;
+        font-size: 1.8rem;
+    }
+
+    .crear-curso-body {
+        padding: 2.5rem;
+        background: white;
+    }
+
+    /* Formulario */
+    .form-crear-curso {
+        margin-top: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-label i {
+        margin-right: 8px;
+        color: #3498db;
+        width: 16px;
+        text-align: center;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        background: white;
+        transform: translateY(-2px);
+    }
+
+    .form-control:invalid:not(:focus) {
+        border-color: #e74c3c;
+    }
+
+    .form-control:valid:not(:focus) {
+        border-color: #27ae60;
+    }
+
+    /* Checkbox personalizado */
+    .form-check {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #3498db;
+        margin: 2rem 0;
+    }
+
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-right: 0.75rem;
+        border: 2px solid #bdc3c7;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #27ae60;
+        border-color: #27ae60;
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(39, 174, 96, 0.25);
+    }
+
+    .form-check-label {
+        font-weight: 600;
+        color: #2c3e50;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    /* Validación */
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+    }
+
+    .text-danger i {
+        margin-right: 5px;
+    }
+
+    .validation-summary-errors {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 1rem;
+    }
+
+    .validation-summary-errors li {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Botones */
+    .botones-accion {
+        margin-top: 2.5rem;
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        background: linear-gradient(135deg, #229954, #1e8449);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+
+    /* Grupos de formulario */
+    .form-row {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-col {
+        flex: 1;
+    }
+
+    /* Indicadores de estado */
+    .input-group {
+        position: relative;
+    }
+
+    .input-valid {
+        border-color: #27ae60 !important;
+    }
+
+    .input-invalid {
+        border-color: #e74c3c !important;
+    }
+
+    /* Tooltips visuales */
+    .form-hint {
+        font-size: 0.8rem;
+        color: #7f8c8d;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-hint i {
+        margin-right: 5px;
+        color: #3498db;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .crear-curso-header {
+            padding: 1.5rem;
+        }
+        
+        .crear-curso-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .crear-curso-body {
+            padding: 1.5rem;
+        }
+        
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .botones-accion .btn {
+            width: 100%;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+        
+        .form-check {
+            padding: 0.75rem;
+        }
+    }
+
+    /* Animaciones */
+    .crear-curso-card {
+        animation: slideInUp 0.6s ease;
+    }
+
+    .form-group {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Efectos de focus mejorados */
+    .form-control:focus {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.15);
+    }
+</style>
+
+<div class="crear-curso-container">
+    <div class="crear-curso-card">
+        <div class="crear-curso-header">
+            <h2><i class="fas fa-plus-circle"></i>@ViewData["Title"]</h2>
+        </div>
+        <div class="crear-curso-body">
+            <form asp-action="CrearCurso" method="post" class="form-crear-curso">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label asp-for="Codigo" class="form-label">
+                                <i class="fas fa-hashtag"></i>Código del Curso
+                            </label>
+                            <input asp-for="Codigo" class="form-control" placeholder="Ej: MAT101" />
+                            <span asp-validation-for="Codigo" class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>Usa un código único para identificar el curso
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label asp-for="Nombre" class="form-label">
+                                <i class="fas fa-book"></i>Nombre del Curso
+                            </label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ej: Matemáticas Básicas" />
+                            <span asp-validation-for="Nombre" class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>Nombre completo y descriptivo del curso
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label asp-for="Creditos" class="form-label">
+                                <i class="fas fa-award"></i>Créditos Académicos
+                            </label>
+                            <input asp-for="Creditos" class="form-control" type="number" min="1" max="10" placeholder="1-10" />
+                            <span asp-validation-for="Creditos" class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>Valor entre 1 y 10 créditos
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label asp-for="CupoMaximo" class="form-label">
+                                <i class="fas fa-users"></i>Cupo Máximo
+                            </label>
+                            <input asp-for="CupoMaximo" class="form-control" type="number" min="1" max="100" placeholder="1-100" />
+                            <span asp-validation-for="CupoMaximo" class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>Número máximo de estudiantes permitidos
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label asp-for="HorarioInicio" class="form-label">
+                                <i class="fas fa-clock"></i>Horario de Inicio
+                            </label>
+                            <input asp-for="HorarioInicio" class="form-control" type="time" />
+                            <span asp-validation-for="HorarioInicio" class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>Hora de inicio de la clase
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label asp-for="HorarioFin" class="form-label">
+                                <i class="fas fa-clock"></i>Horario de Fin
+                            </label>
+                            <input asp-for="HorarioFin" class="form-control" type="time" />
+                            <span asp-validation-for="HorarioFin" class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                            <div class="form-hint">
+                                <i class="fas fa-info-circle"></i>Hora de finalización de la clase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-check">
+                    <input asp-for="Activo" class="form-check-input" checked />
+                    <label asp-for="Activo" class="form-check-label">
+                        Curso activo y disponible para matrícula
+                    </label>
+                </div>
+
+                <div class="botones-accion">
+                    <button type="submit" class="btn btn-success me-3">
+                        <i class="fas fa-save me-2"></i>Crear Curso
+                    </button>
+                    <a href="@Url.Action("Cursos")" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
