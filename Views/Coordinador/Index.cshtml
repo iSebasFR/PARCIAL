@@ -1,0 +1,429 @@
+@{
+    ViewData["Title"] = "Panel de Coordinador";
+}
+
+<style>
+    .coordinador-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #3498db;
+        display: flex;
+        align-items: center;
+    }
+
+    .page-title i {
+        margin-right: 15px;
+        color: #3498db;
+        font-size: 2rem;
+    }
+
+    /* Alertas */
+    .alert {
+        border: none;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+    }
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    /* Tarjetas de gestión */
+    .card-gestion {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .card-gestion:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    .card-header-gestion {
+        padding: 1.5rem;
+        border-bottom: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header-gestion h5 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+    }
+
+    .card-header-gestion h5 i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .card-header-primary {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+    }
+
+    .card-header-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+    }
+
+    .card-body-gestion {
+        padding: 2rem;
+        background: white;
+    }
+
+    .card-body-gestion p {
+        color: #5d6d7e;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .card-body-gestion ul {
+        margin-bottom: 2rem;
+        padding-left: 1rem;
+    }
+
+    .card-body-gestion li {
+        color: #5d6d7e;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .card-body-gestion li:before {
+        content: "▸";
+        color: #3498db;
+        font-weight: bold;
+        margin-right: 0.5rem;
+    }
+
+    /* Botones de acción */
+    .btn-gestion {
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+    .btn-gestion-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+
+    .btn-gestion-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        color: white;
+    }
+
+    .btn-gestion-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+    }
+
+    .btn-gestion-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+        color: white;
+    }
+
+    .btn-gestion i {
+        margin-right: 8px;
+    }
+
+    /* Tarjeta de resumen */
+    .card-resumen {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-top: 2rem;
+    }
+
+    .card-header-resumen {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 1.5rem;
+        border-bottom: 2px solid #3498db;
+    }
+
+    .card-header-resumen h5 {
+        margin: 0;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+    }
+
+    .card-header-resumen h5 i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+
+    .card-body-resumen {
+        padding: 2.5rem;
+        background: white;
+    }
+
+    /* Estadísticas */
+    .estadistica-item {
+        text-align: center;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .estadistica-item:hover {
+        transform: translateY(-3px);
+    }
+
+    .estadistica-numero {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .estadistica-label {
+        color: #7f8c8d;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Indicadores de estado */
+    .indicador-activo {
+        position: relative;
+    }
+
+    .indicador-activo:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 8px;
+        height: 8px;
+        background: #27ae60;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    /* Grid de tarjetas */
+    .grid-gestion {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .grid-gestion {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .card-body-gestion {
+            padding: 1.5rem;
+        }
+        
+        .card-body-resumen {
+            padding: 1.5rem;
+        }
+        
+        .estadistica-numero {
+            font-size: 2.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .coordinador-container {
+            padding: 0 10px;
+        }
+        
+        .card-body-gestion {
+            padding: 1.25rem;
+        }
+        
+        .estadistica-item {
+            padding: 0.5rem;
+        }
+        
+        .estadistica-numero {
+            font-size: 2rem;
+        }
+    }
+
+    /* Animaciones */
+    .card-gestion {
+        animation: slideInUp 0.6s ease;
+    }
+
+    .card-resumen {
+        animation: slideInUp 0.8s ease;
+    }
+
+    .estadistica-item {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7);
+        }
+        
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(39, 174, 96, 0);
+        }
+        
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(39, 174, 96, 0);
+        }
+    }
+
+    /* Efectos adicionales */
+    .card-gestion:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .card-gestion:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .estadistica-item:nth-child(1) {
+        animation-delay: 0.3s;
+    }
+
+    .estadistica-item:nth-child(2) {
+        animation-delay: 0.4s;
+    }
+
+    .estadistica-item:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+</style>
+
+<div class="coordinador-container">
+    <h2 class="page-title">
+        <i class="fas fa-tachometer-alt"></i>@ViewData["Title"]
+    </h2>
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="grid-gestion">
+        <div class="card card-gestion">
+            <div class="card-header-gestion card-header-primary text-white">
+                <h5><i class="fas fa-book"></i>Gestión de Cursos</h5>
+                <i class="fas fa-graduation-cap fa-lg"></i>
+            </div>
+            <div class="card-body-gestion">
+                <p>Administra la oferta académica de cursos. Crea, edita y gestiona el estado de los cursos disponibles para los estudiantes.</p>
+                <ul>
+                    <li>Crear nuevos cursos académicos</li>
+                    <li>Editar información de cursos existentes</li>
+                    <li>Activar y desactivar cursos</li>
+                    <li>Gestionar horarios y cupos</li>
+                </ul>
+                <a href="@Url.Action("Cursos")" class="btn-gestion btn-gestion-primary">
+                    <i class="fas fa-cogs me-2"></i>Gestionar Cursos
+                </a>
+            </div>
+        </div>
+
+        <div class="card card-gestion">
+            <div class="card-header-gestion card-header-success text-white">
+                <h5><i class="fas fa-clipboard-list"></i>Gestión de Matrículas</h5>
+                <i class="fas fa-user-check fa-lg"></i>
+            </div>
+            <div class="card-body-gestion">
+                <p>Administra las matrículas de estudiantes. Revisa, confirma y gestiona las solicitudes de inscripción en los cursos.</p>
+                <ul>
+                    <li>Ver todas las matrículas registradas</li>
+                    <li>Confirmar matrículas pendientes</li>
+                    <li>Cancelar matrículas existentes</li>
+                    <li>Gestionar estado de inscripciones</li>
+                </ul>
+                <a href="@Url.Action("Matriculas")" class="btn-gestion btn-gestion-success">
+                    <i class="fas fa-tasks me-2"></i>Gestionar Matrículas
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-resumen">
+        <div class="card-header-resumen">
+            <h5><i class="fas fa-chart-bar me-2"></i>Resumen Rápido del Sistema</h5>
+        </div>
+        <div class="card-body-resumen">
+            <div class="row">
+                <div class="col-md-4 estadistica-item">
+                    <div class="estadistica-numero">@ViewBag.TotalCursos</div>
+                    <div class="estadistica-label">Total de Cursos</div>
+                </div>
+                <div class="col-md-4 estadistica-item">
+                    <div class="estadistica-numero">@ViewBag.CursosActivos</div>
+                    <div class="estadistica-label">Cursos Activos</div>
+                </div>
+                <div class="col-md-4 estadistica-item">
+                    <div class="estadistica-numero">@ViewBag.MatriculasPendientes</div>
+                    <div class="estadistica-label">Matrículas Pendientes</div>
