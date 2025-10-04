@@ -1,0 +1,449 @@
+@model List<PARCIAL.Models.Matricula>
+
+@{
+    ViewData["Title"] = "Mis Matrículas";
+}
+
+<style>
+    .matriculas-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #3498db;
+        display: flex;
+        align-items: center;
+    }
+
+    .page-title i {
+        margin-right: 15px;
+        color: #3498db;
+    }
+
+    /* Alertas */
+    .alert {
+        border: none;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+        border: none;
+    }
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    /* Tabla de matrículas */
+    .tabla-matriculas {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .tabla-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 1.5rem;
+    }
+
+    .tabla-header h5 {
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .tabla-header h5 i {
+        margin-right: 10px;
+    }
+
+    .table {
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table thead th {
+        background: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        padding: 1.25rem 1rem;
+        border-bottom: 2px solid #3498db;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .table tbody td {
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+        color: #5d6d7e;
+    }
+
+    .curso-nombre {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .curso-codigo {
+        color: #7f8c8d;
+        font-family: 'Courier New', monospace;
+        font-weight: 500;
+    }
+
+    /* Badges de estado */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .bg-warning {
+        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+        color: white;
+    }
+
+    .bg-success {
+        background: linear-gradient(135deg, #27ae60, #229954) !important;
+        color: white;
+    }
+
+    .bg-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+        color: white;
+    }
+
+    /* Estado vacío */
+    .estado-vacio {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+
+    .estado-vacio i {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.8;
+    }
+
+    .estado-vacio h5 {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .alert-link {
+        color: #ffeaa7 !important;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    .alert-link:hover {
+        color: #fdcb6e !important;
+    }
+
+    /* Botones */
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-primary i {
+        margin-right: 8px;
+    }
+
+    /* Contador de matrículas */
+    .contador-matriculas {
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .contador-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .contador-icon {
+        font-size: 2rem;
+        opacity: 0.9;
+    }
+
+    .contador-texto h6 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .contador-texto h4 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .tabla-matriculas {
+            border-radius: 10px;
+        }
+        
+        .table thead {
+            display: none;
+        }
+        
+        .table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .table tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .table tbody td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #2c3e50;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            min-width: 120px;
+        }
+        
+        .contador-matriculas {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .estado-vacio {
+            padding: 2rem 1rem;
+        }
+        
+        .estado-vacio i {
+            font-size: 3rem;
+        }
+    }
+
+    /* Animaciones */
+    .tabla-matriculas {
+        animation: slideInUp 0.6s ease;
+    }
+
+    .table tbody tr {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="matriculas-container">
+    <h2 class="page-title">
+        <i class="fas fa-clipboard-list"></i>@ViewData["Title"]
+    </h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <!-- Contador de matrículas -->
+        <div class="contador-matriculas">
+            <div class="contador-info">
+                <i class="fas fa-graduation-cap contador-icon"></i>
+                <div class="contador-texto">
+                    <h6>TOTAL DE MATRÍCULAS</h6>
+                    <h4>@Model.Count</h4>
+                </div>
+            </div>
+            <div class="contador-info">
+                <i class="fas fa-check-circle contador-icon"></i>
+                <div class="contador-texto">
+                    <h6>CONFIRMADAS</h6>
+                    <h4>@Model.Count(m => m.Estado == EstadoMatricula.Confirmada)</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabla-matriculas">
+            <div class="tabla-header">
+                <h5><i class="fas fa-list-alt me-2"></i>Historial de Matrículas</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Código</th>
+                            <th>Fecha de Registro</th>
+                            <th>Estado</th>
+                            <th>Horario</th>
+                            <th>Créditos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var matricula in Model)
+                        {
+                            <tr>
+                                <td data-label="Curso">
+                                    <span class="curso-nombre">@matricula.Curso.Nombre</span>
+                                </td>
+                                <td data-label="Código">
+                                    <span class="curso-codigo">@matricula.Curso.Codigo</span>
+                                </td>
+                                <td data-label="Fecha de Registro">
+                                    @matricula.FechaRegistro.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td data-label="Estado">
+                                    @switch (matricula.Estado)
+                                    {
+                                        case EstadoMatricula.Pendiente:
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock me-1"></i>Pendiente
+                                            </span>
+                                            break;
+                                        case EstadoMatricula.Confirmada:
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Confirmada
+                                            </span>
+                                            break;
+                                        case EstadoMatricula.Cancelada:
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Cancelada
+                                            </span>
+                                            break;
+                                    }
+                                </td>
+                                <td data-label="Horario">
+                                    @{
+                                        var horaInicio = DateTime.Today.Add(matricula.Curso.HorarioInicio).ToString("hh\\:mm tt");
+                                        var horaFin = DateTime.Today.Add(matricula.Curso.HorarioFin).ToString("hh\\:mm tt");
+                                    }
+                                    @horaInicio - @horaFin
+                                </td>
+                                <td data-label="Créditos">
+                                    @matricula.Curso.Creditos
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="estado-vacio">
+            <i class="fas fa-inbox"></i>
+            <h5>No tienes matrículas registradas</h5>
+            <p class="mb-3">Comienza tu journey académico inscribiéndote en alguno de nuestros cursos disponibles.</p>
+            <a href="@Url.Action("Catalogo", "Cursos")" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>Explorar Catálogo de Cursos
+            </a>
+        </div>
+    }
+
+    <div class="mt-4">
+        <a href="@Url.Action("Catalogo", "Cursos")" class="btn btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Catálogo
+        </a>
+    </div>
+</div>

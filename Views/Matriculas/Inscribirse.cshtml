@@ -1,0 +1,389 @@
+@model PARCIAL.Models.Curso
+
+@{
+    ViewData["Title"] = "Confirmar Inscripción";
+}
+
+<style>
+    .inscripcion-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    /* Tarjeta principal */
+    .confirmacion-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        overflow: hidden;
+        margin: 2rem 0;
+    }
+
+    .confirmacion-header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        border-bottom: none;
+    }
+
+    .confirmacion-header h2 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .confirmacion-header h2 i {
+        margin-right: 15px;
+        font-size: 1.8rem;
+    }
+
+    .confirmacion-body {
+        padding: 2.5rem;
+        background: white;
+    }
+
+    /* Alertas */
+    .alert {
+        border: none;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+    }
+
+    .alert-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: white;
+        border: none;
+    }
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    /* Detalles del curso */
+    .curso-detalles {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .curso-detalles h5 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .curso-detalles h5 i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+
+    .detalle-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+    }
+
+    .detalle-label {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 120px;
+        margin-right: 1rem;
+    }
+
+    .detalle-value {
+        color: #5d6d7e;
+        font-weight: 500;
+        flex-grow: 1;
+    }
+
+    /* Badge */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .bg-warning {
+        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+        color: white;
+    }
+
+    /* Botones */
+    .btn-success {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        background: linear-gradient(135deg, #229954, #1e8449);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        border: none;
+        border-radius: 10px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+    }
+
+    /* Grupos de botones */
+    .botones-principales {
+        margin: 2.5rem 0;
+        text-align: center;
+    }
+
+    .botones-secundarios {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .botones-secundarios .btn {
+        margin: 0 0.5rem;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .botones-secundarios .btn i {
+        margin-right: 8px;
+    }
+
+    /* Formulario */
+    .form-confirmacion {
+        margin-top: 2rem;
+    }
+
+    /* Mensaje de confirmación */
+    .mensaje-confirmacion {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .confirmacion-header {
+            padding: 1.5rem;
+        }
+        
+        .confirmacion-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .confirmacion-body {
+            padding: 1.5rem;
+        }
+        
+        .curso-detalles {
+            padding: 1.5rem;
+        }
+        
+        .detalle-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .detalle-label {
+            min-width: auto;
+            margin-bottom: 0.25rem;
+        }
+        
+        .botones-principales .btn {
+            width: 100%;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+        
+        .botones-secundarios .btn {
+            width: 100%;
+            margin: 0.5rem 0;
+            justify-content: center;
+        }
+    }
+
+    /* Animaciones */
+    .confirmacion-card {
+        animation: slideInUp 0.6s ease;
+    }
+
+    .detalle-item {
+        animation: fadeIn 0.6s ease;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<div class="inscripcion-container">
+    <div class="confirmacion-card">
+        <div class="confirmacion-header">
+            <h2><i class="fas fa-user-graduate"></i>Confirmar Inscripción</h2>
+        </div>
+        <div class="confirmacion-body">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="botones-secundarios">
+                    <a href="/Cursos/Detalle/@Model.Id" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Curso
+                    </a>
+                    <a href="/Cursos/Catalogo" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Buscar Otros Cursos
+                    </a>
+                    <a href="/Matriculas/MisMatriculas" class="btn btn-info">
+                        <i class="fas fa-clipboard-list me-2"></i>Ver Mis Matrículas
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="mensaje-confirmacion">
+                    <i class="fas fa-question-circle me-2"></i>¿Estás seguro de que quieres inscribirte en este curso?
+                </div>
+                
+                <div class="curso-detalles">
+                    <h5><i class="fas fa-info-circle me-2"></i>Detalles del Curso</h5>
+                    
+                    <div class="detalle-item">
+                        <span class="detalle-label">Curso:</span>
+                        <span class="detalle-value">@Model.Nombre</span>
+                    </div>
+                    
+                    <div class="detalle-item">
+                        <span class="detalle-label">Código:</span>
+                        <span class="detalle-value">@Model.Codigo</span>
+                    </div>
+                    
+                    <div class="detalle-item">
+                        <span class="detalle-label">Créditos:</span>
+                        <span class="detalle-value">@Model.Creditos créditos</span>
+                    </div>
+                    
+                    <div class="detalle-item">
+                        <span class="detalle-label">Cupo Máximo:</span>
+                        <span class="detalle-value">@Model.CupoMaximo estudiantes</span>
+                    </div>
+                    
+                    <div class="detalle-item">
+                        <span class="detalle-label">Horario:</span>
+                        <span class="detalle-value">
+                            @{
+                                var horaInicio = DateTime.Today.Add(Model.HorarioInicio).ToString("hh\\:mm tt");
+                                var horaFin = DateTime.Today.Add(Model.HorarioFin).ToString("hh\\:mm tt");
+                            }
+                            @horaInicio - @horaFin
+                        </span>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Nota importante:</strong> Tu inscripción quedará en estado 
+                    <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Pendiente</span> 
+                    hasta que sea confirmada por un coordinador.
+                </div>
+
+                <form method="post" action="/Matriculas/ConfirmarInscripcion" class="form-confirmacion">
+                    <input type="hidden" name="cursoId" value="@Model.Id" />
+                    
+                    <div class="botones-principales">
+                        <button type="submit" class="btn btn-success me-3">
+                            <i class="fas fa-check-circle me-2"></i>Confirmar Inscripción
+                        </button>
+                        <a href="/Cursos/Detalle/@Model.Id" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
